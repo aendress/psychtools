@@ -13,10 +13,10 @@
 %%
 %% The Current Maintainer of this work is Ansgar Endress.
 %%
-%% This work consists of the files psychtools.sty, ansgar.sty,
-%% psychtools-doc.tex, and psychtools.pdf.
+%% This work consists of the files psychtools.sty, psychtools.tex,
+%% howto.tex, and the derived files psychtools.pdf and howto.pdf.
 
-\ProvidesPackage{psychtools}[2026/06/26 v1.0 Macros for psychology manuscripts]
+\ProvidesPackage{psychtools}[2026/06/26 v1.1 Macros for psychology manuscripts]
 
 \RequirePackage{tocloft}
 \RequirePackage{xcolor}
@@ -44,11 +44,15 @@
 \newif\ifINAPPENDIX
 \INAPPENDIXfalse
 
+\newif\ifINCLUDESTATSMACROS
+\INCLUDESTATSMACROSfalse
+
 \DeclareOption{includedetails}{\INCLUDEDETAILStrue}
 \DeclareOption{excludedetails}{\INCLUDEDETAILSfalse}
 \DeclareOption{nocitecommands}{\INCLUDECITECOMMANDSfalse}
 \DeclareOption{appendixtoc}{\APPENDIXTOCtrue}
 \DeclareOption{nocolorize}{\COLORIZEfalse}
+\DeclareOption{statsmacros}{\INCLUDESTATSMACROStrue}
 \ProcessOptions\relax
 
 
@@ -68,63 +72,6 @@
         }
     }
 \fi
-
-
-%%
-%% Statistical notation
-%%
-%% WARNING: The following commands use short names (\T, \F, \Z, \p, \M, \U, \W)
-%% that may conflict with other packages (especially math or font packages).
-%% Load psychtools BEFORE any math-heavy packages, or use the \nocolorize option
-%% to disable colorization if a conflict occurs. If you experience errors, check
-%% whether another loaded package defines any of these names.
-%%
-
-\newcommand{\T}{\ensuremath{\mathit{t}}\xspace}
-\newcommand{\F}{\ensuremath{\mathit{F}}\xspace}
-\newcommand{\Z}{\ensuremath{\mathit{Z}}\xspace}
-\newcommand{\p}{\ensuremath{\mathit{p}}\xspace}
-\newcommand{\M}{\ensuremath{\mathit{M}}\xspace}
-\newcommand{\SD}{\ensuremath{\mathit{SD}}\xspace}
-\newcommand{\SE}{\ensuremath{\mathit{SE}}\xspace}
-\newcommand{\D}{Cohen's \ensuremath{\mathit{d}}\xspace}
-\newcommand{\CI}{\ensuremath{\mathit{CI}_{.95}}\xspace}
-\newcommand{\et}{\ensuremath{\eta^2}\xspace}
-\newcommand{\etp}{\ensuremath{\eta_p^2}\xspace}
-\newcommand{\U}{\ensuremath{\mathit{U}}\xspace}
-\newcommand{\W}{\ensuremath{\mathit{W}}\xspace}
-
-
-%%
-%% Utility macros
-%%
-
-% Primary use: mark passages revised in response to reviewer comments so
-% the editor/reviewer can locate changes easily. Suppress with nocolorize.
-\newcommand{\colorize}[1]{%
-  \ifCOLORIZE
-    {\color{red}{#1}}%
-  \else
-    {#1}%
-  \fi
-}
-
-\newcommand{\protectedemail}[1]{%
-  \tikz[baseline=(char.base)]{%
-    \node[inner sep=0pt] (char) {\texttt{#1}};}}
-
-\newcommand{\includesubgraphics}[2]{
-  \begin{subfigure}[a][][t]{.9\textwidth}
-    {\Large \bf #1 \vspace{-\baselineskip}}
-    \hspace{1em}\includegraphics[width=0.9\linewidth]{#2}
-  \end{subfigure}
-}
-
-\newcommand{\footnotewithdetails}[1]{%
-  \ifINCLUDEDETAILS%
-    \footnote{\textcolor{red}{(Footnote will be removed)} #1}%
-  \fi%
-}
 
 
 %%
@@ -183,11 +130,7 @@
   \setcounter{subsection}{0}%
 }
 
-
-%%
-%% Appendix TOC support (active only with appendixtoc option)
-%%
-
+% TOC support for appendixtoc option.
 \newcounter{recordedtocdepth}
 \AtBeginDocument{
     \ifAPPENDIXTOC
@@ -211,8 +154,24 @@
 
 
 %%
-%% Draft section headers (visible only when includedetails is active)
+%% Draft editing aids
 %%
+
+% Primary use: mark passages revised in response to reviewer comments so
+% the editor/reviewer can locate changes easily. Suppress with nocolorize.
+\newcommand{\colorize}[1]{%
+  \ifCOLORIZE
+    {\color{red}{#1}}%
+  \else
+    {#1}%
+  \fi
+}
+
+\newcommand{\footnotewithdetails}[1]{%
+  \ifINCLUDEDETAILS%
+    \footnote{\textcolor{red}{(Footnote will be removed)} #1}%
+  \fi%
+}
 
 \newcommand{\draftsection}[1]{%
   \ifINCLUDEDETAILS%
@@ -237,3 +196,43 @@
     \ifAPPENDIXTOC\ifINAPPENDIX\unmuteTOC\fi\fi
   \fi%
 }
+
+
+%%
+%% Utility macros
+%%
+
+\newcommand{\protectedemail}[1]{%
+  \tikz[baseline=(char.base)]{%
+    \node[inner sep=0pt] (char) {\texttt{#1}};}}
+
+\newcommand{\includesubgraphics}[2]{
+  \begin{subfigure}[a][][t]{.9\textwidth}
+    {\Large \bf #1 \vspace{-\baselineskip}}
+    \hspace{1em}\includegraphics[width=0.9\linewidth]{#2}
+  \end{subfigure}
+}
+
+
+%%
+%% Statistical notation (enabled by the statsmacros option; off by default)
+%%
+%% The short names (\T, \F, \Z, \p, \M, \U, \W) may conflict with math or
+%% font packages. Load with \usepackage[statsmacros]{psychtools} to enable.
+%%
+
+\ifINCLUDESTATSMACROS
+  \newcommand{\T}{\ensuremath{\mathit{t}}\xspace}
+  \newcommand{\F}{\ensuremath{\mathit{F}}\xspace}
+  \newcommand{\Z}{\ensuremath{\mathit{Z}}\xspace}
+  \newcommand{\p}{\ensuremath{\mathit{p}}\xspace}
+  \newcommand{\M}{\ensuremath{\mathit{M}}\xspace}
+  \newcommand{\SD}{\ensuremath{\mathit{SD}}\xspace}
+  \newcommand{\SE}{\ensuremath{\mathit{SE}}\xspace}
+  \newcommand{\D}{Cohen's \ensuremath{\mathit{d}}\xspace}
+  \newcommand{\CI}{\ensuremath{\mathit{CI}_{.95}}\xspace}
+  \newcommand{\et}{\ensuremath{\eta^2}\xspace}
+  \newcommand{\etp}{\ensuremath{\eta_p^2}\xspace}
+  \newcommand{\U}{\ensuremath{\mathit{U}}\xspace}
+  \newcommand{\W}{\ensuremath{\mathit{W}}\xspace}
+\fi

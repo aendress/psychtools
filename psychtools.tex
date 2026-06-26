@@ -1,6 +1,6 @@
 \documentclass[a4paper,11pt]{article}
 
-\usepackage{psychtools}
+\usepackage[statsmacros]{psychtools}
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{microtype}
@@ -25,7 +25,7 @@
 \newcommand{\iopt}[1]{\opt{#1}\index{#1@\texttt{#1} (option)}}
 
 \title{\pkg{psychtools} --- LaTeX Macros for Psychology Manuscripts\\[0.5ex]
-  \large Version 1.0}
+  \large Version 1.1}
 \author{Ansgar Endress\\\texttt{ansgar.endress@m4x.org}}
 \date{2026/06/26}
 
@@ -44,7 +44,8 @@ four common needs:
 \begin{itemize}
   \item \textbf{Statistical notation} (\S\ref{sec:stats}): compact, italic
         commands for standard test statistics and effect sizes, matching
-        APA formatting requirements.
+        APA formatting requirements. Enabled with the \opt{statsmacros}
+        package option.
   \item \textbf{Supplementary-materials appendix} (\S\ref{sec:appendix}):
         automatic \texttt{S}-prefixed numbering for pages, sections, figures,
         and tables, with an optional local table of contents.
@@ -60,7 +61,7 @@ four common needs:
 \begin{verbatim}
   \usepackage{psychtools}
   % or with options:
-  \usepackage[excludedetails,appendixtoc]{psychtools}
+  \usepackage[statsmacros,excludedetails,appendixtoc]{psychtools}
 \end{verbatim}
 
 \pkg{psychtools} requires \pkg{tocloft}, \pkg{xcolor}, \pkg{subcaption},
@@ -75,7 +76,7 @@ and option using a simulated serial-position-effect free-recall experiment.
 \section{Package Options}
 \label{sec:options}
 
-\pkg{psychtools} declares five options, described below. Where a
+\pkg{psychtools} declares six options, described below. Where a
 default is listed the option is active unless you explicitly override
 it; options with no default are inactive unless you request them.
 
@@ -112,13 +113,23 @@ By default, draft content is typeset in red so it is easy to
 distinguish from the main text during writing.  Passing
 \opt{nocolorize} suppresses the colouring: draft content is shown in
 the normal text colour.  This option also affects \cmd{colorize}
-(see \S\ref{sec:misc}).
+(see \S\ref{sec:draft}).
 
 \subsection*{\iopt{nocitecommands} \quad (default: off)}
 
 Disables the \pkg{apacite} citation helpers \cmd{citeeg} and
 \cmd{cites} (see \S\ref{sec:cite}).  Use this option if you are not
 using \pkg{apacite} and wish to define these command names yourself.
+
+\subsection*{\iopt{statsmacros} \quad (default: off)}
+
+Enables the short statistical-notation commands \cmd{T}, \cmd{F},
+\cmd{Z}, \cmd{p}, \cmd{M}, \cmd{SD}, \cmd{SE}, \cmd{D}, \cmd{CI},
+\cmd{et}, \cmd{etp}, \cmd{U}, and \cmd{W} (see \S\ref{sec:stats}).
+These commands are \emph{not} defined by default because their
+single-letter names may conflict with commands from math or font
+packages. Request this option only when you need the shortcuts and
+have verified there are no conflicts with other packages you load.
 
 %% ---------------------------------------------------------------
 \section{Statistical Notation}
@@ -128,6 +139,13 @@ The commands in Table~\ref{tab:stats} typeset common test statistics and
 effect sizes in italic math style, matching APA formatting requirements.
 Each command includes a trailing \cmd{xspace} so it can be used freely in
 running text without extra braces.
+
+\paragraph{Activating statistical notation}
+These commands are \emph{not} defined by default.  Enable them with the
+\opt{statsmacros} package option:
+\begin{verbatim}
+  \usepackage[statsmacros]{psychtools}
+\end{verbatim}
 
 \begin{table}[h]
 \centering
@@ -150,7 +168,7 @@ Command & Output & Meaning \\
 \cmd{W}  & \W  & Wilcoxon $W$ \\
 \bottomrule
 \end{tabular}
-\caption{Statistical notation commands.}
+\caption{Statistical notation commands (require \opt{statsmacros}).}
 \label{tab:stats}
 \end{table}
 
@@ -160,15 +178,12 @@ Command & Output & Meaning \\
 \end{verbatim}
 Produces: The effect was significant, \T(38) = 2.45, \p = .019, \D = 0.77.
 
-\paragraph{Compatibility warning}
+\paragraph{Compatibility note}
 \label{sec:compat}
-The short command names (\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M},
-\cmd{U}, \cmd{W}) may conflict with commands defined by math or font
-packages. To minimise the risk, load \pkg{psychtools} \emph{before}
-any math-heavy packages. If you encounter a ``command already defined''
-error, identify which other package defines the conflicting name and
-either reorder the \cmd{usepackage} declarations or stop loading that
-package.
+The single-letter command names (\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p},
+\cmd{M}, \cmd{U}, \cmd{W}) may conflict with commands defined by math
+or font packages.  To minimise the risk, load \pkg{psychtools}
+\emph{before} any math-heavy packages.
 
 %% ---------------------------------------------------------------
 \section{Supplementary Materials and Appendix}
@@ -385,17 +400,6 @@ mailto target.
 \end{verbatim}
 
 %% ---------------------------------------------------------------
-\section{Backward Compatibility}
-
-An \texttt{ansgar.sty} shim is distributed alongside
-\pkg{psychtools}.  It contains a single line:
-\begin{verbatim}
-  \RequirePackage{psychtools}
-\end{verbatim}
-Documents that used \cmd{usepackage}\{ansgar\} continue to work
-without modification.
-
-%% ---------------------------------------------------------------
 \section{License}
 
 \pkg{psychtools} is distributed under the
@@ -418,6 +422,7 @@ Option & Default & See \\
 \opt{appendixtoc}     & off & \S\ref{sec:options} \\
 \opt{nocolorize}      & off & \S\ref{sec:options} \\
 \opt{nocitecommands}  & off & \S\ref{sec:options} \\
+\opt{statsmacros}     & off & \S\ref{sec:options} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -428,9 +433,6 @@ Option & Default & See \\
 \toprule
 Command & See \\
 \midrule
-\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M} & \S\ref{sec:stats} \\
-\cmd{SD}, \cmd{SE}, \cmd{D}, \cmd{CI}        & \S\ref{sec:stats} \\
-\cmd{et}, \cmd{etp}, \cmd{U}, \cmd{W}        & \S\ref{sec:stats} \\
 \cmd{myappendix}           & \S\ref{sec:appendix} \\
 \cmd{appsection}           & \S\ref{sec:appendix} \\
 \cmd{appsectionFirst}      & \S\ref{sec:appendix} \\
@@ -444,6 +446,9 @@ Command & See \\
 \cmd{cites}                & \S\ref{sec:cite} \\
 \cmd{includesubgraphics}   & \S\ref{sec:misc} \\
 \cmd{protectedemail}       & \S\ref{sec:misc} \\
+\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M} & \S\ref{sec:stats} (require \opt{statsmacros}) \\
+\cmd{SD}, \cmd{SE}, \cmd{D}, \cmd{CI}        & \S\ref{sec:stats} (require \opt{statsmacros}) \\
+\cmd{et}, \cmd{etp}, \cmd{U}, \cmd{W}        & \S\ref{sec:stats} (require \opt{statsmacros}) \\
 \bottomrule
 \end{tabular}
 \end{center}

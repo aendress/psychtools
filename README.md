@@ -4,7 +4,7 @@
 psychology and cognitive science manuscripts. It covers:
 
 - **Statistical notation**: compact, italic commands for common test statistics
-  and effect sizes (APA style)
+  and effect sizes (APA style), enabled with the `statsmacros` option
 - **Supplementary-materials appendix**: `S`-prefixed page, section, figure, and
   table numbering with an optional local table of contents
 - **Draft editing aids**: conditional footnotes and section headers that are
@@ -31,7 +31,7 @@ Then run `texhash` (TeX Live) or `initexmf --update-fndb` (MiKTeX).
 ```latex
 \usepackage{psychtools}
 % or with options:
-\usepackage[excludedetails,appendixtoc]{psychtools}
+\usepackage[statsmacros,excludedetails,appendixtoc]{psychtools}
 ```
 
 See `psychtools.pdf` for the full documentation and `howto.pdf` for a
@@ -60,9 +60,16 @@ Draft content is coloured red by default so it is easy to spot during writing.
 Disable the `apacite` citation helpers (`\citeeg`, `\cites`). Use this if you
 are not using `apacite` and wish to define these command names yourself.
 
+**`statsmacros`** (default: off)  
+Enable the short statistical-notation commands (`\T`, `\F`, `\Z`, `\p`, `\M`,
+`\SD`, `\SE`, `\D`, `\CI`, `\et`, `\etp`, `\U`, `\W`). These are off by
+default because their single-letter names may conflict with math or font
+packages. Request this option only after verifying there are no conflicts with
+other packages you load.
+
 ## Quick reference
 
-### Statistical notation
+### Statistical notation (requires `statsmacros`)
 | Command | Output | Meaning |
 |---------|--------|---------|
 | `\T` | *t* | Student's *t* |
@@ -78,9 +85,6 @@ are not using `apacite` and wish to define these command names yourself.
 | `\etp` | η²ₚ | Partial eta-squared |
 | `\U` | *U* | Mann–Whitney *U* |
 | `\W` | *W* | Wilcoxon *W* |
-
-> **Compatibility note**: the short command names may conflict with math or font
-> packages. Load `psychtools` before any math-heavy packages.
 
 ### Supplementary materials appendix
 ```latex
@@ -109,12 +113,6 @@ are not using `apacite` and wish to define these command names yourself.
 \includesubgraphics{A}{filename}   % subfigure with bold panel label, no sub-caption
 \protectedemail{user@example.org}  % email in a TikZ node (deters scrapers)
 ```
-
-## Backward compatibility
-
-`ansgar.sty` is provided as a one-line shim (`\RequirePackage{psychtools}`)
-so that existing documents using `\usepackage{ansgar}` continue to work
-without modification.
 
 ## License
 

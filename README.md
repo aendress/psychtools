@@ -34,7 +34,9 @@ Then run `texhash` (TeX Live) or `initexmf --update-fndb` (MiKTeX).
 \usepackage[excludedetails,appendixtoc]{psychtools}
 ```
 
-See `psychtools.pdf` for the full documentation.
+See `psychtools.pdf` for the full documentation and `howto.pdf` for a
+worked example using all commands, based on a simulated serial-position-effect
+experiment.
 
 ## Package options
 

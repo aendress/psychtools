@@ -1,0 +1,233 @@
+%% psychtools.sty
+%% Copyright 2026 Ansgar Endress <ansgar.endress@gmx.net>
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   https://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%%
+%% The Current Maintainer of this work is Ansgar Endress.
+%%
+%% This work consists of the files psychtools.sty, ansgar.sty,
+%% psychtools-doc.tex, and psychtools.pdf.
+
+\ProvidesPackage{psychtools}[2026/06/26 v1.0 Macros for psychology manuscripts]
+
+\RequirePackage{tocloft}
+\RequirePackage{xcolor}
+\RequirePackage{subcaption}
+\RequirePackage{xspace}
+\RequirePackage{tikz}
+
+
+%%
+%% Options
+%%
+
+\newif\ifINCLUDEDETAILS
+\INCLUDEDETAILStrue
+
+\newif\ifINCLUDECITECOMMANDS
+\INCLUDECITECOMMANDStrue
+
+\newif\ifAPPENDIXTOC
+\APPENDIXTOCfalse
+
+\newif\ifCOLORIZE
+\COLORIZEtrue
+
+\DeclareOption{includedetails}{\INCLUDEDETAILStrue}
+\DeclareOption{excludedetails}{\INCLUDEDETAILSfalse}
+\DeclareOption{nocitecommands}{\INCLUDECITECOMMANDSfalse}
+\DeclareOption{appendixtoc}{\APPENDIXTOCtrue}
+\DeclareOption{nocolorize}{\COLORIZEfalse}
+\ProcessOptions\relax
+
+
+%%
+%% Citation commands (apacite only)
+%%
+
+\ifINCLUDECITECOMMANDS
+    \AtBeginDocument{
+        \@ifpackageloaded{apacite}{%
+            \newcommand{\citeeg}[1]{\cite<e.g.,>[]{#1}}
+            \newcommand{\cites}[1]{\citeauthor{#1}'s \citeyear{#1}}
+        }{
+            \PackageWarning{psychtools}{apacite not found. Using basic citation fallbacks.}
+            \providecommand{\citeeg}[1]{(e.g., \cite{#1})}
+            \providecommand{\cites}[1]{\citeauthor{#1}'s \citeyear{#1}}
+        }
+    }
+\fi
+
+
+%%
+%% Statistical notation
+%%
+%% WARNING: The following commands use short names (\T, \F, \Z, \p, \M, \U, \W)
+%% that may conflict with other packages (especially math or font packages).
+%% Load psychtools BEFORE any math-heavy packages, or use the \nocolorize option
+%% to disable colorization if a conflict occurs. If you experience errors, check
+%% whether another loaded package defines any of these names.
+%%
+
+\newcommand{\T}{\ensuremath{\mathit{t}}\xspace}
+\newcommand{\F}{\ensuremath{\mathit{F}}\xspace}
+\newcommand{\Z}{\ensuremath{\mathit{Z}}\xspace}
+\newcommand{\p}{\ensuremath{\mathit{p}}\xspace}
+\newcommand{\M}{\ensuremath{\mathit{M}}\xspace}
+\newcommand{\SD}{\ensuremath{\mathit{SD}}\xspace}
+\newcommand{\SE}{\ensuremath{\mathit{SE}}\xspace}
+\newcommand{\D}{Cohen's \ensuremath{\mathit{d}}\xspace}
+\newcommand{\CI}{\ensuremath{\mathit{CI}_{.95}}\xspace}
+\newcommand{\et}{\ensuremath{\eta^2}\xspace}
+\newcommand{\etp}{\ensuremath{\eta_p^2}\xspace}
+\newcommand{\U}{\ensuremath{\mathit{U}}\xspace}
+\newcommand{\W}{\ensuremath{\mathit{W}}\xspace}
+
+
+%%
+%% Utility macros
+%%
+
+\newcommand{\colorize}[1]{%
+  \ifCOLORIZE
+    {\color{red}{#1}}%
+  \else
+    {#1}%
+  \fi
+}
+
+\newcommand{\protectedemail}[1]{%
+  \tikz[baseline=(char.base)]{%
+    \node[inner sep=0pt] (char) {\texttt{#1}};}}
+
+\newcommand{\includesubgraphics}[2]{
+  \begin{subfigure}[a][][t]{.9\textwidth}
+    {\Large \bf #1 \vspace{-\baselineskip}}
+    \hspace{1em}\includegraphics[width=0.9\linewidth]{#2}
+  \end{subfigure}
+}
+
+\newcommand{\footnotewithdetails}[1]{%
+  \ifINCLUDEDETAILS%
+    \footnote{\textcolor{red}{(Footnote will be removed)} #1}%
+  \fi%
+}
+
+
+%%
+%% Supplementary materials / appendix system
+%%
+%% Set \appendixname in your document before calling \myappendix, e.g.:
+%%   \renewcommand{\appendixname}{Supplementary Online Materials}
+%% If not set, the prefix defaults to "S".
+%%
+
+% Short prefix derived from \appendixname at call time.
+\newcommand{\appendixshortname}{%
+  \ifnum\pdfstrcmp{\appendixname}{Supplementary Information}=0 SI\else
+  \ifnum\pdfstrcmp{\appendixname}{Supplementary Materials}=0 SM\else
+  \ifnum\pdfstrcmp{\appendixname}{Supplementary Online Materials}=0 SM\else
+  S\fi\fi\fi
+}
+
+\newcommand{\myappendix}{%
+  \clearpage
+  \setcounter{secnumdepth}{3}
+  \renewcommand{\thepage}{S\arabic{page}}
+  \setcounter{section}{0}
+  \setcounter{page}{1}
+  \renewcommand{\thesection}{\appendixshortname\arabic{section}}
+  \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+  \setcounter{figure}{0}
+  \setcounter{table}{0}
+  \renewcommand{\thefigure}{S\arabic{figure}}
+  \renewcommand{\thetable}{S\arabic{table}}
+  \clearpage
+  {\noindent {\LARGE {\bf \appendixname}}}\\
+  \ifAPPENDIXTOC
+    \addtolength{\cftsecnumwidth}{2em}
+    \addtolength{\cftsubsecnumwidth}{2em}
+    \addtolength{\cftsubsubsecnumwidth}{2.5em}
+    \addtolength{\cftsubsecindent}{2em}
+    \addtolength{\cftsubsubsecindent}{3.5em}
+    \setcounter{tocdepth}{\value{recordedtocdepth}}
+    \unmuteTOC
+    \tableofcontents
+    \clearpage
+  \fi
+}
+
+\newcommand{\appsection}[1]{%
+  \ifnum\value{section}>0 \clearpage \fi
+  \section{#1}%
+  \setcounter{subsection}{0}%
+}
+
+% Deprecated: \appsection now handles the first section too.
+\newcommand{\appsectionFirst}[1]{%
+  \section{#1}%
+  \setcounter{subsection}{0}%
+}
+
+
+%%
+%% Appendix TOC support (active only with appendixtoc option)
+%%
+
+\newcounter{recordedtocdepth}
+\AtBeginDocument{
+    \ifAPPENDIXTOC
+        \setcounter{recordedtocdepth}{\value{tocdepth}}
+        \setcounter{tocdepth}{-2}
+        \muteTOC
+    \fi
+}
+
+\ifAPPENDIXTOC
+    \newcommand{\muteTOC}{%
+      \addtocontents{toc}{\protect\setcounter{tocdepth}{-2}}%
+    }
+    \newcommand{\unmuteTOC}{%
+      \addtocontents{toc}{\protect\setcounter{tocdepth}{\the\value{recordedtocdepth}}}%
+    }
+\else
+    \newcommand{\muteTOC}{}
+    \newcommand{\unmuteTOC}{}
+\fi
+
+
+%%
+%% Draft section headers (visible only when includedetails is active)
+%%
+
+\newcommand{\draftsection}[1]{%
+  \ifINCLUDEDETAILS%
+    \ifAPPENDIXTOC\muteTOC\fi
+    \section{\textcolor{red}{(Header will be removed)} #1}%
+    \ifAPPENDIXTOC\unmuteTOC\fi
+  \fi%
+}
+
+\newcommand{\draftsubsection}[1]{%
+  \ifINCLUDEDETAILS%
+    \ifAPPENDIXTOC\muteTOC\fi
+    \subsection{\textcolor{red}{(Header will be removed)} #1}%
+    \ifAPPENDIXTOC\unmuteTOC\fi
+  \fi%
+}
+
+\newcommand{\draftsubsubsection}[1]{%
+  \ifINCLUDEDETAILS%
+    \ifAPPENDIXTOC\muteTOC\fi
+    \subsubsection{\textcolor{red}{(Header will be removed)} #1}%
+    \ifAPPENDIXTOC\unmuteTOC\fi
+  \fi%
+}

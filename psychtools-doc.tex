@@ -1,0 +1,276 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{psychtools}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{parskip}
+
+\hypersetup{
+  colorlinks=true,
+  urlcolor=blue,
+  linkcolor=black,
+}
+
+\newcommand{\pkg}[1]{\textsf{#1}}
+\newcommand{\cmd}[1]{\texttt{\textbackslash #1}}
+\newcommand{\opt}[1]{\texttt{#1}}
+\newcommand{\meta}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
+
+\title{\pkg{psychtools} --- LaTeX Macros for Psychology Manuscripts\\[0.5ex]
+  \large Version 1.0}
+\author{Ansgar Endress\\\texttt{ansgar.endress@gmx.net}}
+\date{2026/06/26}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\bigskip\hrule\bigskip
+
+%% ---------------------------------------------------------------
+\section{Introduction}
+
+\pkg{psychtools} provides a collection of convenience macros for writing
+empirical psychology and cognitive science manuscripts in LaTeX. It addresses
+four common needs:
+
+\begin{itemize}
+  \item Compact, italicised notation for standard test statistics and
+        effect sizes (\S\ref{sec:stats}).
+  \item Supplementary-materials appendices with \texttt{S}-prefixed numbering
+        and an optional TOC (\S\ref{sec:appendix}).
+  \item Draft editing aids: conditional footnotes and section headers that
+        can be toggled off for the final submission (\S\ref{sec:draft}).
+  \item Citation shortcuts for \pkg{apacite} users (\S\ref{sec:cite}).
+\end{itemize}
+
+\noindent Load the package in the usual way:
+\begin{verbatim}
+  \usepackage{psychtools}
+  % or with options:
+  \usepackage[excludedetails,appendixtoc]{psychtools}
+\end{verbatim}
+
+\pkg{psychtools} requires \pkg{tocloft}, \pkg{xcolor}, \pkg{subcaption},
+\pkg{xspace}, and \pkg{tikz}, all of which are part of standard TeX~Live and
+MiK\TeX{} distributions.
+
+%% ---------------------------------------------------------------
+\section{Package Options}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Option & Default & Effect \\
+\midrule
+\opt{includedetails} & on & Show draft footnotes and section headers \\
+\opt{excludedetails} & ---& Hide all draft content (use for submission) \\
+\opt{appendixtoc}   & off & Add a TOC for the supplementary materials \\
+\opt{nocolorize}    & --- & Suppress red colouring of draft content \\
+\opt{nocitecommands}& --- & Disable the \pkg{apacite} citation helpers \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ---------------------------------------------------------------
+\section{Statistical Notation}
+\label{sec:stats}
+
+The commands in Table~\ref{tab:stats} typeset common test statistics and
+effect sizes in italic math style, matching APA formatting requirements.
+Each command includes a trailing \cmd{xspace} so it can be used freely in
+running text without extra braces.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+Command & Output & Meaning \\
+\midrule
+\cmd{T}  & \T  & Student's $t$ \\
+\cmd{F}  & \F  & $F$ ratio \\
+\cmd{Z}  & \Z  & $Z$ score \\
+\cmd{p}  & \p  & $p$ value \\
+\cmd{M}  & \M  & Mean \\
+\cmd{SD} & \SD & Standard deviation \\
+\cmd{SE} & \SE & Standard error \\
+\cmd{D}  & \D  & Cohen's $d$ \\
+\cmd{CI} & \CI & 95\% confidence interval \\
+\cmd{et} & \et & Eta-squared \\
+\cmd{etp}& \etp& Partial eta-squared \\
+\cmd{U}  & \U  & Mann--Whitney $U$ \\
+\cmd{W}  & \W  & Wilcoxon $W$ \\
+\bottomrule
+\end{tabular}
+\caption{Statistical notation commands.}
+\label{tab:stats}
+\end{table}
+
+\paragraph{Example}
+\begin{verbatim}
+  The effect was significant, \T(38) = 2.45, \p = .019, \D = 0.77.
+\end{verbatim}
+Produces: The effect was significant, \T(38) = 2.45, \p = .019, \D = 0.77.
+
+\paragraph{Compatibility warning}
+\label{sec:compat}
+The short command names (\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M},
+\cmd{U}, \cmd{W}) may conflict with commands defined by math or font
+packages. To minimise the risk:
+\begin{itemize}
+  \item Load \pkg{psychtools} \emph{before} any math-heavy packages.
+  \item If you encounter redefinition errors, check whether another
+        loaded package defines the conflicting name and either remove
+        that package or replace it with one that does not.
+\end{itemize}
+
+%% ---------------------------------------------------------------
+\section{Supplementary Materials Appendix}
+\label{sec:appendix}
+
+Many psychology journals require supplementary materials numbered
+\texttt{S1}, \texttt{S2},~\ldots{} with figures and tables prefixed
+\texttt{S1}, \texttt{S2},~\ldots{} as well. The commands below set
+up this numbering automatically.
+
+\subsection{\cmd{myappendix}}
+
+Place \cmd{myappendix} at the point in your document where the
+supplementary materials begin. It:
+
+\begin{itemize}
+  \item resets the page counter to \texttt{S1};
+  \item resets section, figure, and table counters with the \texttt{S}
+        prefix;
+  \item prints the appendix title (from \cmd{appendixname});
+  \item optionally inserts a TOC for the supplementary materials
+        (if the \opt{appendixtoc} option is active).
+\end{itemize}
+
+You should set \cmd{appendixname} in your document before calling
+\cmd{myappendix}:
+
+\begin{verbatim}
+  \renewcommand{\appendixname}{Supplementary Online Materials}
+  \myappendix
+\end{verbatim}
+
+If \cmd{appendixname} is not set, the prefix defaults to \texttt{S}.
+The following values of \cmd{appendixname} produce a two-letter prefix:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\cmd{appendixname} & Prefix \\
+\midrule
+\texttt{Supplementary Information} & \texttt{SI} \\
+\texttt{Supplementary Materials} & \texttt{SM} \\
+\texttt{Supplementary Online Materials} & \texttt{SM} \\
+anything else & \texttt{S} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{\cmd{appsection}\{\meta{title}\}}
+
+Use \cmd{appsection} for sections inside the supplementary materials.
+From the second section onwards it inserts a \cmd{clearpage} before
+the new section, keeping the layout clean.
+
+\begin{verbatim}
+  \myappendix
+  \appsection{Stimuli}
+  ...
+  \appsection{Additional Analyses}
+  ...
+\end{verbatim}
+
+\subsection{Appendix TOC}
+
+With the \opt{appendixtoc} option, \pkg{psychtools} suppresses the
+main document TOC from showing supplementary-materials entries
+(by setting \texttt{tocdepth} to $-2$ globally) and then restores
+it inside \cmd{myappendix}, where a separate local TOC is printed.
+
+%% ---------------------------------------------------------------
+\section{Draft Editing Aids}
+\label{sec:draft}
+
+These commands are visible when the \opt{includedetails} option is
+active (the default) and invisible when \opt{excludedetails} is used.
+Draft content is coloured red (unless \opt{nocolorize} is passed).
+
+\begin{center}
+\begin{tabular}{lp{8.5cm}}
+\toprule
+Command & Effect \\
+\midrule
+\cmd{footnotewithdetails}\{\meta{text}\} &
+  Inserts a red footnote marked ``(Footnote will be removed)''. \\
+\cmd{draftsection}\{\meta{title}\} &
+  Inserts a red section header marked ``(Header will be removed)''. \\
+\cmd{draftsubsection}\{\meta{title}\} &
+  Same for subsections. \\
+\cmd{draftsubsubsection}\{\meta{title}\} &
+  Same for subsubsections. \\
+\cmd{colorize}\{\meta{text}\} &
+  Colours \meta{text} red; passes through unchanged with \opt{nocolorize}. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% ---------------------------------------------------------------
+\section{Citation Helpers (apacite)}
+\label{sec:cite}
+
+These commands are active when \pkg{apacite} is loaded and the
+\opt{nocitecommands} option is not given.
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Command & Output \\
+\midrule
+\cmd{citeeg}\{\meta{key}\} & (e.g., Author Year) \\
+\cmd{cites}\{\meta{key}\} & Author's Year \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+If \pkg{apacite} is not loaded, basic fallbacks using \cmd{cite} and
+\cmd{citeauthor}/\cmd{citeyear} are provided with a package warning.
+
+%% ---------------------------------------------------------------
+\section{Miscellaneous}
+
+\subsection{\cmd{includesubgraphics}\{\meta{label}\}\{\meta{filename}\}}
+
+Inserts a subfigure (via \pkg{subcaption}) at 90\% text width with a
+bold, large label but without a sub-caption. Useful when you want
+panel labels (\textbf{A}, \textbf{B}, \ldots) without separate captions.
+
+\subsection{\cmd{protectedemail}\{\meta{address}\}}
+
+Renders an email address in \texttt{typewriter} font inside a TikZ
+node. This prevents some simple web scrapers from harvesting the
+address as plain text.
+
+%% ---------------------------------------------------------------
+\section{Backward Compatibility}
+
+An \texttt{ansgar.sty} shim is distributed alongside \pkg{psychtools}.
+It contains a single line:
+\begin{verbatim}
+  \RequirePackage{psychtools}
+\end{verbatim}
+Documents that used \cmd{usepackage}\{ansgar\} continue to work
+without modification.
+
+%% ---------------------------------------------------------------
+\section{License}
+
+\pkg{psychtools} is distributed under the
+\href{https://www.latex-project.org/lppl.txt}{LaTeX Project Public
+License}, version~1.3c or later.
+
+\end{document}

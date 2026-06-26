@@ -1,0 +1,69 @@
+The LaTeX Project Public License
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+LPPL Version 1.3c  2008-05-04
+
+Copyright 1999 2002-2008 LaTeX3 Project
+    All rights reserved.
+
+PREAMBLE
+========
+
+The LaTeX Project Public License (LPPL) is the primary license under
+which the LaTeX kernel and the base LaTeX packages are distributed.
+
+You may use this license for any work of which you hold the copyright
+and which you wish to distribute. This license may be particularly
+suitable if your work is TeX-related (such as a LaTeX package), but
+it is written in general terms and can be used for any work regardless
+of subject matter. If you wish to adapt this license for your own use,
+see the instructions in the file LPPL-1.3c.txt.
+
+The most recent version of this license is in the file:
+
+   https://www.latex-project.org/lppl.txt
+
+This work (psychtools) has the LPPL maintenance status `maintained'.
+The Current Maintainer of this work is Ansgar Endress.
+This work consists of the files psychtools.sty, ansgar.sty,
+psychtools-doc.tex, and psychtools.pdf.
+
+
+CONDITIONS ON DISTRIBUTION AND MODIFICATION
+============================================
+
+  1. Activities other than distribution and/or modification of the Work
+are not covered by this license; they are outside its scope.  In
+particular, the act of running the Work is not restricted and no
+requirements are made concerning any offers of support for the Work.
+
+  2. You are allowed to distribute a complete, unmodified copy of the Work
+as you received it.  Distribution of only part of the Work is considered
+modification of the Work, and no right to distribute such a Derived Work
+may be assumed under the terms of this clause.
+
+  3. You are allowed to distribute a Compiled Work that has been generated
+from a complete, unmodified copy of the Work.  Distribution of only part
+of such a Compiled Work is considered modification of the Compiled Work,
+and no right to distribute such a Derived Compiled Work may be assumed
+under the terms of this clause.
+
+  4. If you are not the Current Maintainer of the Work, you are allowed to
+distribute a Derived Work provided the following conditions are met for
+every component of the Work unless that component clearly states that
+the terms under which it may be modified or distributed do not include
+the conditions described in this clause:
+
+    a. The derived component is distributed with a name different from
+       that of the corresponding component of the Work.
+
+    b. The combined distribution is accompanied by a statement that
+       documents all changes made to the Work.
+
+    c. The combined distribution is accompanied by a statement that
+       informs recipients of the location of the unchanged Work.
+
+  5. No additional conditions may be placed on the distribution of the Work,
+Derived Works, or Compiled Works.
+
+See https://www.latex-project.org/lppl.txt for the full license text.

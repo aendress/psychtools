@@ -1,0 +1,23 @@
+# LaTeX build artifacts
+*.log
+*.aux
+*.toc
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+
+# CTAN packaging (local working files, not for the repo)
+_unused/
+psychtools-ctan/
+psychtools.zip
+psychtools-doc.pdf
+
+# macOS
+.DS_Store
+*.webloc

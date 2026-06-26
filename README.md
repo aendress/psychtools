@@ -123,4 +123,4 @@ LPPL 1.3c — see `LICENSE`.
 ## Author
 
 Ansgar Endress  
-<ansgar.endress@gmx.net>
+<ansgar.endress@m4x.org>

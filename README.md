@@ -95,7 +95,7 @@ are not using `apacite` and wish to define these command names yourself.
 \draftsubsection{...}       % same for subsections
 \draftsubsubsection{...}    % same for subsubsections
 \footnotewithdetails{...}   % red footnote; hidden with excludedetails
-\colorize{...}              % colour text red; pass-through with nocolorize
+\colorize{...}              % mark revised text red (reviewer responses); pass-through with nocolorize
 ```
 
 ### Citation helpers (apacite)

@@ -317,11 +317,15 @@ cut from the final paper.
 
 \subsection{\icmd{colorize}\{\meta{text}\}}
 
-Typesets \meta{text} in red.  With the \opt{nocolorize} package
-option, \meta{text} is typeset in the normal text colour instead.
-This command is used internally by the draft-heading and
-\cmd{footnotewithdetails} commands, but it is also available for
-direct use if you want to highlight other draft material.
+The primary use of \cmd{colorize} is to mark passages that have been
+revised in response to reviewer comments, so that the editor and
+reviewers can locate the changes easily when reading the revised
+manuscript.  \meta{text} is typeset in red; with the \opt{nocolorize}
+package option it is typeset in the normal text colour instead (useful
+when submitting a clean version without visible markup).
+
+\cmd{colorize} is also used internally by the draft-heading and
+\cmd{footnotewithdetails} commands.
 
 %% ---------------------------------------------------------------
 \section{Citation Helpers (apacite)}

@@ -41,6 +41,9 @@
 \newif\ifCOLORIZE
 \COLORIZEtrue
 
+\newif\ifINAPPENDIX
+\INAPPENDIXfalse
+
 \DeclareOption{includedetails}{\INCLUDEDETAILStrue}
 \DeclareOption{excludedetails}{\INCLUDEDETAILSfalse}
 \DeclareOption{nocitecommands}{\INCLUDECITECOMMANDSfalse}
@@ -96,6 +99,8 @@
 %% Utility macros
 %%
 
+% Primary use: mark passages revised in response to reviewer comments so
+% the editor/reviewer can locate changes easily. Suppress with nocolorize.
 \newcommand{\colorize}[1]{%
   \ifCOLORIZE
     {\color{red}{#1}}%
@@ -140,6 +145,7 @@
 
 \newcommand{\myappendix}{%
   \clearpage
+  \INAPPENDIXtrue
   \setcounter{secnumdepth}{3}
   \renewcommand{\thepage}{S\arabic{page}}
   \setcounter{section}{0}
@@ -210,24 +216,24 @@
 
 \newcommand{\draftsection}[1]{%
   \ifINCLUDEDETAILS%
-    \ifAPPENDIXTOC\muteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\muteTOC\fi\fi
     \section{\textcolor{red}{(Header will be removed)} #1}%
-    \ifAPPENDIXTOC\unmuteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\unmuteTOC\fi\fi
   \fi%
 }
 
 \newcommand{\draftsubsection}[1]{%
   \ifINCLUDEDETAILS%
-    \ifAPPENDIXTOC\muteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\muteTOC\fi\fi
     \subsection{\textcolor{red}{(Header will be removed)} #1}%
-    \ifAPPENDIXTOC\unmuteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\unmuteTOC\fi\fi
   \fi%
 }
 
 \newcommand{\draftsubsubsection}[1]{%
   \ifINCLUDEDETAILS%
-    \ifAPPENDIXTOC\muteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\muteTOC\fi\fi
     \subsubsection{\textcolor{red}{(Header will be removed)} #1}%
-    \ifAPPENDIXTOC\unmuteTOC\fi
+    \ifAPPENDIXTOC\ifINAPPENDIX\unmuteTOC\fi\fi
   \fi%
 }

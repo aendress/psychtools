@@ -5,6 +5,9 @@
 \usepackage{booktabs}
 \usepackage{microtype}
 \usepackage{parskip}
+\usepackage{makeidx}
+
+\makeindex
 
 \hypersetup{
   colorlinks=true,
@@ -16,6 +19,10 @@
 \newcommand{\cmd}[1]{\texttt{\textbackslash #1}}
 \newcommand{\opt}[1]{\texttt{#1}}
 \newcommand{\meta}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
+
+% Index helpers
+\newcommand{\icmd}[1]{\cmd{#1}\index{#1@\texttt{\textbackslash #1}}}
+\newcommand{\iopt}[1]{\opt{#1}\index{#1@\texttt{#1} (option)}}
 
 \title{\pkg{psychtools} --- LaTeX Macros for Psychology Manuscripts\\[0.5ex]
   \large Version 1.0}
@@ -31,17 +38,22 @@
 \section{Introduction}
 
 \pkg{psychtools} provides a collection of convenience macros for writing
-empirical psychology and cognitive science manuscripts in LaTeX. It addresses
+empirical psychology and cognitive science manuscripts in \LaTeX. It addresses
 four common needs:
 
 \begin{itemize}
-  \item Compact, italicised notation for standard test statistics and
-        effect sizes (\S\ref{sec:stats}).
-  \item Supplementary-materials appendices with \texttt{S}-prefixed numbering
-        and an optional TOC (\S\ref{sec:appendix}).
-  \item Draft editing aids: conditional footnotes and section headers that
-        can be toggled off for the final submission (\S\ref{sec:draft}).
-  \item Citation shortcuts for \pkg{apacite} users (\S\ref{sec:cite}).
+  \item \textbf{Statistical notation} (\S\ref{sec:stats}): compact, italic
+        commands for standard test statistics and effect sizes, matching
+        APA formatting requirements.
+  \item \textbf{Supplementary-materials appendix} (\S\ref{sec:appendix}):
+        automatic \texttt{S}-prefixed numbering for pages, sections, figures,
+        and tables, with an optional local table of contents.
+  \item \textbf{Draft editing aids} (\S\ref{sec:draft}): footnotes and
+        section headers that are marked for removal are shown in red during
+        writing but can be hidden entirely for the final submission by
+        switching a single package option.
+  \item \textbf{Citation shortcuts} (\S\ref{sec:cite}): two helpers for
+        \pkg{apacite} users.
 \end{itemize}
 
 \noindent Load the package in the usual way:
@@ -52,25 +64,57 @@ four common needs:
 \end{verbatim}
 
 \pkg{psychtools} requires \pkg{tocloft}, \pkg{xcolor}, \pkg{subcaption},
-\pkg{xspace}, and \pkg{tikz}, all of which are part of standard TeX~Live and
-MiK\TeX{} distributions.
+\pkg{xspace}, and \pkg{tikz}, all of which are part of standard \TeX~Live and
+Mik\TeX{} distributions.
 
 %% ---------------------------------------------------------------
 \section{Package Options}
+\label{sec:options}
 
-\begin{center}
-\begin{tabular}{lll}
-\toprule
-Option & Default & Effect \\
-\midrule
-\opt{includedetails} & on & Show draft footnotes and section headers \\
-\opt{excludedetails} & ---& Hide all draft content (use for submission) \\
-\opt{appendixtoc}   & off & Add a TOC for the supplementary materials \\
-\opt{nocolorize}    & --- & Suppress red colouring of draft content \\
-\opt{nocitecommands}& --- & Disable the \pkg{apacite} citation helpers \\
-\bottomrule
-\end{tabular}
-\end{center}
+\pkg{psychtools} declares five options, described below. Where a
+default is listed the option is active unless you explicitly override
+it; options with no default are inactive unless you request them.
+
+\subsection*{\iopt{includedetails} / \iopt{excludedetails}
+  \quad (default: \opt{includedetails})}
+
+These two options control the visibility of \emph{draft content} ---
+footnotes and section headers that are intended to remind the author
+of outstanding work and that should be removed before final
+submission.  Draft content is produced by \cmd{footnotewithdetails},
+\cmd{draftsection}, \cmd{draftsubsection}, and
+\cmd{draftsubsubsection} (see \S\ref{sec:draft}).
+
+With the default \opt{includedetails}, draft content appears in the
+output (coloured red unless \opt{nocolorize} is also given).  Switch
+to \opt{excludedetails} when preparing the submission copy: all draft
+content disappears silently, with no extra blank space or other
+artefact.
+
+\subsection*{\iopt{appendixtoc} \quad (default: off)}
+
+When \opt{appendixtoc} is active, \pkg{psychtools} suppresses
+supplementary-materials entries from the \emph{main} document table
+of contents and instead prints a separate, local TOC immediately
+after the supplementary-materials header produced by \cmd{myappendix}
+(see \S\ref{sec:appendix}).
+
+Without this option, supplementary sections appear in the main
+document TOC normally.
+
+\subsection*{\iopt{nocolorize} \quad (default: off)}
+
+By default, draft content is typeset in red so it is easy to
+distinguish from the main text during writing.  Passing
+\opt{nocolorize} suppresses the colouring: draft content is shown in
+the normal text colour.  This option also affects \cmd{colorize}
+(see \S\ref{sec:misc}).
+
+\subsection*{\iopt{nocitecommands} \quad (default: off)}
+
+Disables the \pkg{apacite} citation helpers \cmd{citeeg} and
+\cmd{cites} (see \S\ref{sec:cite}).  Use this option if you are not
+using \pkg{apacite} and wish to define these command names yourself.
 
 %% ---------------------------------------------------------------
 \section{Statistical Notation}
@@ -116,38 +160,46 @@ Produces: The effect was significant, \T(38) = 2.45, \p = .019, \D = 0.77.
 \label{sec:compat}
 The short command names (\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M},
 \cmd{U}, \cmd{W}) may conflict with commands defined by math or font
-packages. To minimise the risk:
-\begin{itemize}
-  \item Load \pkg{psychtools} \emph{before} any math-heavy packages.
-  \item If you encounter redefinition errors, check whether another
-        loaded package defines the conflicting name and either remove
-        that package or replace it with one that does not.
-\end{itemize}
+packages. To minimise the risk, load \pkg{psychtools} \emph{before}
+any math-heavy packages. If you encounter a ``command already defined''
+error, identify which other package defines the conflicting name and
+either reorder the \cmd{usepackage} declarations or stop loading that
+package.
 
 %% ---------------------------------------------------------------
-\section{Supplementary Materials Appendix}
+\section{Supplementary Materials and Appendix}
 \label{sec:appendix}
 
-Many psychology journals require supplementary materials numbered
-\texttt{S1}, \texttt{S2},~\ldots{} with figures and tables prefixed
-\texttt{S1}, \texttt{S2},~\ldots{} as well. The commands below set
-up this numbering automatically.
+Many psychology journals require supplementary materials to use a
+distinct numbering scheme: pages are labelled \texttt{S1},
+\texttt{S2},~\ldots, and figures and tables carry the prefix
+\texttt{S} (e.g.\ Figure~S1, Table~S3).  Setting this up manually
+requires resetting multiple \LaTeX{} counters and renewing several
+formatting commands.  \pkg{psychtools} encapsulates all of this in a
+single call.
 
-\subsection{\cmd{myappendix}}
+\subsection{\icmd{myappendix}}
 
 Place \cmd{myappendix} at the point in your document where the
-supplementary materials begin. It:
+supplementary materials begin. It performs the following actions
+automatically:
 
 \begin{itemize}
-  \item resets the page counter to \texttt{S1};
-  \item resets section, figure, and table counters with the \texttt{S}
-        prefix;
-  \item prints the appendix title (from \cmd{appendixname});
-  \item optionally inserts a TOC for the supplementary materials
-        (if the \opt{appendixtoc} option is active).
+  \item resets the page counter to 1 and formats it as \texttt{S1},
+        \texttt{S2},~\ldots;
+  \item resets the section counter to 0 and prefixes section numbers
+        with the \emph{short name} derived from \cmd{appendixname}
+        (see below);
+  \item resets the figure and table counters to 0 and prefixes their
+        numbers with \texttt{S};
+  \item prints a large bold heading containing \cmd{appendixname};
+  \item if the \opt{appendixtoc} option is active, adjusts TOC
+        indentation for the longer prefixes and prints a local table
+        of contents.
 \end{itemize}
 
-You should set \cmd{appendixname} in your document before calling
+\noindent\textbf{Setting the appendix name.}  You should set
+\cmd{appendixname} in your document \emph{before} calling
 \cmd{myappendix}:
 
 \begin{verbatim}
@@ -155,111 +207,180 @@ You should set \cmd{appendixname} in your document before calling
   \myappendix
 \end{verbatim}
 
-If \cmd{appendixname} is not set, the prefix defaults to \texttt{S}.
-The following values of \cmd{appendixname} produce a two-letter prefix:
+If \cmd{appendixname} is not set, the language-dependent default
+(e.g.\ ``Appendix'' in English) is used and the prefix will be
+\texttt{S}. The following values produce a two-letter prefix via
+\cmd{appendixshortname}:
 
 \begin{center}
 \begin{tabular}{ll}
 \toprule
 \cmd{appendixname} & Prefix \\
 \midrule
-\texttt{Supplementary Information} & \texttt{SI} \\
-\texttt{Supplementary Materials} & \texttt{SM} \\
+\texttt{Supplementary Information}      & \texttt{SI} \\
+\texttt{Supplementary Materials}        & \texttt{SM} \\
 \texttt{Supplementary Online Materials} & \texttt{SM} \\
-anything else & \texttt{S} \\
+anything else                           & \texttt{S}  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\subsection{\cmd{appsection}\{\meta{title}\}}
+\subsection{\icmd{appsection}\{\meta{title}\}}
 
-Use \cmd{appsection} for sections inside the supplementary materials.
-From the second section onwards it inserts a \cmd{clearpage} before
-the new section, keeping the layout clean.
+Use \cmd{appsection} for all sections inside the supplementary
+materials.  It behaves like a regular \cmd{section} with one
+important difference: from the \emph{second} section onwards it
+automatically inserts a \cmd{clearpage} before the new section
+heading, so that each supplementary section starts on a fresh page.
+The first section is not preceded by a page break (since
+\cmd{myappendix} already ends with \cmd{clearpage}).
+
+This differs from a plain \cmd{section}, which never inserts an
+automatic page break.  Using \cmd{section} inside the supplementary
+materials works, but you would need to insert \cmd{clearpage}
+manually between sections.
 
 \begin{verbatim}
+  \renewcommand{\appendixname}{Supplementary Online Materials}
   \myappendix
-  \appsection{Stimuli}
+  \appsection{Stimuli}          % first section — no preceding page break
   ...
-  \appsection{Additional Analyses}
+  \appsection{Additional Analyses}  % second section — preceded by \clearpage
   ...
 \end{verbatim}
 
-\subsection{Appendix TOC}
+\subsection{\icmd{appsectionFirst}\{\meta{title}\} (deprecated)}
 
-With the \opt{appendixtoc} option, \pkg{psychtools} suppresses the
-main document TOC from showing supplementary-materials entries
-(by setting \texttt{tocdepth} to $-2$ globally) and then restores
-it inside \cmd{myappendix}, where a separate local TOC is printed.
+An earlier version of \pkg{psychtools} required the \emph{first}
+appendix section to be introduced with \cmd{appsectionFirst} rather
+than \cmd{appsection}, because the original \cmd{appsection}
+unconditionally inserted a \cmd{clearpage}.  The current
+implementation of \cmd{appsection} checks the section counter and
+skips the page break when it is zero, making \cmd{appsectionFirst}
+a no-op alias.  It is retained for backward compatibility; new
+documents should use \cmd{appsection} throughout.
+
+\subsection{\icmd{appendixshortname}}
+
+\cmd{appendixshortname} expands to the short prefix (\texttt{SI},
+\texttt{SM}, or \texttt{S}) used for section numbers.  It is called
+internally by \cmd{myappendix} but is available if you need the
+prefix elsewhere in your document.
 
 %% ---------------------------------------------------------------
 \section{Draft Editing Aids}
 \label{sec:draft}
 
-These commands are visible when the \opt{includedetails} option is
-active (the default) and invisible when \opt{excludedetails} is used.
-Draft content is coloured red (unless \opt{nocolorize} is passed).
+During manuscript preparation it is common to keep reminders about
+content that still needs to be added or revised --- for example, a
+section that is present only as a placeholder, or a footnote
+explaining a methodological choice that will be cut before
+submission.  The commands in this section allow you to include such
+material in the source file while making it visually prominent
+(coloured red) and easy to remove: switching the \opt{excludedetails}
+package option hides all draft content without leaving blank space or
+other artefacts.
+
+\subsection{Draft section headings}
 
 \begin{center}
-\begin{tabular}{lp{8.5cm}}
+\begin{tabular}{lp{9cm}}
 \toprule
 Command & Effect \\
 \midrule
-\cmd{footnotewithdetails}\{\meta{text}\} &
-  Inserts a red footnote marked ``(Footnote will be removed)''. \\
-\cmd{draftsection}\{\meta{title}\} &
-  Inserts a red section header marked ``(Header will be removed)''. \\
-\cmd{draftsubsection}\{\meta{title}\} &
-  Same for subsections. \\
-\cmd{draftsubsubsection}\{\meta{title}\} &
-  Same for subsubsections. \\
-\cmd{colorize}\{\meta{text}\} &
-  Colours \meta{text} red; passes through unchanged with \opt{nocolorize}. \\
+\icmd{draftsection}\{\meta{t}\} &
+  Typesets a \cmd{section} heading with the prefix
+  \colorize{(Header will be removed)} in red.
+  The heading is invisible with \opt{excludedetails}. \\[4pt]
+\icmd{draftsubsection}\{\meta{t}\} &
+  Same for a \cmd{subsection} heading. \\[4pt]
+\icmd{draftsubsubsection}\{\meta{t}\} &
+  Same for a \cmd{subsubsection} heading. \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+When the \opt{appendixtoc} option is active, draft headings are
+automatically excluded from the supplementary-materials TOC.
+
+\subsection{\icmd{footnotewithdetails}\{\meta{text}\}}
+
+Inserts a footnote with the prefix \colorize{(Footnote will be
+removed)} in red, followed by \meta{text}.  The footnote is
+invisible with \opt{excludedetails}.  Use this for methodological
+notes or explanations that are helpful during review but should be
+cut from the final paper.
+
+\subsection{\icmd{colorize}\{\meta{text}\}}
+
+Typesets \meta{text} in red.  With the \opt{nocolorize} package
+option, \meta{text} is typeset in the normal text colour instead.
+This command is used internally by the draft-heading and
+\cmd{footnotewithdetails} commands, but it is also available for
+direct use if you want to highlight other draft material.
 
 %% ---------------------------------------------------------------
 \section{Citation Helpers (apacite)}
 \label{sec:cite}
 
 These commands are active when \pkg{apacite} is loaded and the
-\opt{nocitecommands} option is not given.
+\opt{nocitecommands} option is not given.  If \pkg{apacite} is not
+loaded, basic fallbacks using \cmd{cite} and
+\cmd{citeauthor}/\cmd{citeyear} are provided, and a package warning
+is issued.
 
 \begin{center}
-\begin{tabular}{ll}
+\begin{tabular}{lll}
 \toprule
-Command & Output \\
+Command & Example output & Use case \\
 \midrule
-\cmd{citeeg}\{\meta{key}\} & (e.g., Author Year) \\
-\cmd{cites}\{\meta{key}\} & Author's Year \\
+\icmd{citeeg}\{\meta{key}\} &
+  (e.g., Smith 2020) &
+  Cite an example reference \\
+\icmd{cites}\{\meta{key}\} &
+  Smith's (2020) &
+  Possessive citation in running text \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-If \pkg{apacite} is not loaded, basic fallbacks using \cmd{cite} and
-\cmd{citeauthor}/\cmd{citeyear} are provided with a package warning.
-
 %% ---------------------------------------------------------------
 \section{Miscellaneous}
+\label{sec:misc}
 
-\subsection{\cmd{includesubgraphics}\{\meta{label}\}\{\meta{filename}\}}
+\subsection{\icmd{includesubgraphics}\{\meta{label}\}\{\meta{filename}\}}
 
-Inserts a subfigure (via \pkg{subcaption}) at 90\% text width with a
-bold, large label but without a sub-caption. Useful when you want
-panel labels (\textbf{A}, \textbf{B}, \ldots) without separate captions.
+Inserts a subfigure (via the \pkg{subcaption} package) at 90\% of
+the text width, with a bold large label (e.g.\ \textbf{A},
+\textbf{B}) but \emph{without} a sub-caption.  Use this when you
+want panel labels in a multi-panel figure but prefer a single shared
+caption below the whole figure rather than individual captions per
+panel.
 
-\subsection{\cmd{protectedemail}\{\meta{address}\}}
+\begin{verbatim}
+  \begin{figure}
+    \includesubgraphics{A}{panel_a.pdf}
+    \includesubgraphics{B}{panel_b.pdf}
+    \caption{Results. Panel A shows ...; Panel B shows ...}
+  \end{figure}
+\end{verbatim}
 
-Renders an email address in \texttt{typewriter} font inside a TikZ
-node. This prevents some simple web scrapers from harvesting the
-address as plain text.
+\subsection{\icmd{protectedemail}\{\meta{address}\}}
+
+Renders an email address in \texttt{typewriter} font inside a
+\pkg{tikz} node.  Wrapping the address in a TikZ node rather than
+plain text prevents some simple web crawlers from harvesting it as a
+mailto target.
+
+\begin{verbatim}
+  \protectedemail{ansgar.endress@gmx.net}
+\end{verbatim}
 
 %% ---------------------------------------------------------------
 \section{Backward Compatibility}
 
-An \texttt{ansgar.sty} shim is distributed alongside \pkg{psychtools}.
-It contains a single line:
+An \texttt{ansgar.sty} shim is distributed alongside
+\pkg{psychtools}.  It contains a single line:
 \begin{verbatim}
   \RequirePackage{psychtools}
 \end{verbatim}
@@ -272,5 +393,53 @@ without modification.
 \pkg{psychtools} is distributed under the
 \href{https://www.latex-project.org/lppl.txt}{LaTeX Project Public
 License}, version~1.3c or later.
+
+%% ---------------------------------------------------------------
+\appendix
+\section{Command and Option Reference}
+\label{sec:ref}
+
+\subsection*{Package options}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Option & Default & See \\
+\midrule
+\opt{includedetails}  & on  & \S\ref{sec:options} \\
+\opt{excludedetails}  & off & \S\ref{sec:options} \\
+\opt{appendixtoc}     & off & \S\ref{sec:options} \\
+\opt{nocolorize}      & off & \S\ref{sec:options} \\
+\opt{nocitecommands}  & off & \S\ref{sec:options} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Commands}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Command & See \\
+\midrule
+\cmd{T}, \cmd{F}, \cmd{Z}, \cmd{p}, \cmd{M} & \S\ref{sec:stats} \\
+\cmd{SD}, \cmd{SE}, \cmd{D}, \cmd{CI}        & \S\ref{sec:stats} \\
+\cmd{et}, \cmd{etp}, \cmd{U}, \cmd{W}        & \S\ref{sec:stats} \\
+\cmd{myappendix}           & \S\ref{sec:appendix} \\
+\cmd{appsection}           & \S\ref{sec:appendix} \\
+\cmd{appsectionFirst}      & \S\ref{sec:appendix} \\
+\cmd{appendixshortname}    & \S\ref{sec:appendix} \\
+\cmd{draftsection}         & \S\ref{sec:draft} \\
+\cmd{draftsubsection}      & \S\ref{sec:draft} \\
+\cmd{draftsubsubsection}   & \S\ref{sec:draft} \\
+\cmd{footnotewithdetails}  & \S\ref{sec:draft} \\
+\cmd{colorize}             & \S\ref{sec:draft} \\
+\cmd{citeeg}               & \S\ref{sec:cite} \\
+\cmd{cites}                & \S\ref{sec:cite} \\
+\cmd{includesubgraphics}   & \S\ref{sec:misc} \\
+\cmd{protectedemail}       & \S\ref{sec:misc} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\printindex
 
 \end{document}

@@ -1,7 +1,10 @@
-\documentclass[man,floatsintext]{apa6}
+\documentclass[man,floatsintext]{apa6}   % add "mask" here for the anonymous-review build
 \usepackage[american]{babel}
 \usepackage{csquotes}
 \usepackage[appendixtoc,statsmacros]{psychtools}  % statsmacros: enable stat commands; appendixtoc: separate TOC for SM
+% Author masking: \maskaffiliation and \maskdetail (below) print their argument
+% normally, but a redaction marker once apa6's "mask" option is set on the
+% \documentclass line above (or psychtools is loaded with "maskauthor").
 \usepackage{apacite}
 \usepackage{booktabs}
 \usepackage{pgfplots}
@@ -16,7 +19,7 @@
   A \textit{psychtools} Usage Demonstration}
 \shorttitle{Serial Position Effect Demo}
 \author{Ansgar Endress}
-\affiliation{Department of Psychology, City St George's, University of London}
+\affiliation{Department of Psychology, \maskaffiliation{City St George's, University of London}}
 \leftheader{Endress}
 
 \authornote{%
@@ -69,11 +72,18 @@ real experimental results is coincidental.
 \subsection{Participants}
 
 Thirty hypothetical participants (\M{} age = 22.4 years, \SD{} = 3.1,
-range 18--34) were recruited from a psychology subject pool. Two participants
+range 18--34) were recruited from the psychology subject pool at
+\maskaffiliation{City St George's, University of London}. Two participants
 were excluded for recall proportions more than 2.5 standard deviations below
 the group mean.%
 \footnotewithdetails{Exclusion criterion should be verified against
   preregistration document.}
+The (simulated) study was approved by the departmental ethics committee
+(approval \maskdetail{ETH0000-0000}).  In the anonymous-review build
+(with \texttt{mask} added to the \texttt{apa6} class options), the
+institution name and the approval number above are replaced by neutral
+markers; \texttt{\textbackslash maskaffiliation} and
+\texttt{\textbackslash maskdetail} leave the text untouched otherwise.
 
 \subsection{Materials}
 

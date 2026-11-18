@@ -16,7 +16,7 @@
 %% This work consists of the files psychtools.sty, psychtools.tex,
 %% howto.tex, and the derived files psychtools.pdf and howto.pdf.
 
-\ProvidesPackage{psychtools}[2026/06/26 v1.1 Macros for psychology manuscripts]
+\ProvidesPackage{psychtools}[2026/08/31 v1.2 Macros for psychology manuscripts]
 
 \RequirePackage{tocloft}
 \RequirePackage{xcolor}
@@ -47,13 +47,24 @@
 \newif\ifINCLUDESTATSMACROS
 \INCLUDESTATSMACROSfalse
 
+% Author-masking for anonymous peer review. Off by default; forced on below when
+% the document class is apa6 loaded with its own `mask` option.
+\newif\ifPSYCHTOOLSMASKAUTHOR
+\PSYCHTOOLSMASKAUTHORfalse
+
 \DeclareOption{includedetails}{\INCLUDEDETAILStrue}
 \DeclareOption{excludedetails}{\INCLUDEDETAILSfalse}
 \DeclareOption{nocitecommands}{\INCLUDECITECOMMANDSfalse}
 \DeclareOption{appendixtoc}{\APPENDIXTOCtrue}
 \DeclareOption{nocolorize}{\COLORIZEfalse}
 \DeclareOption{statsmacros}{\INCLUDESTATSMACROStrue}
+\DeclareOption{maskauthor}{\PSYCHTOOLSMASKAUTHORtrue}
+\DeclareOption{nomaskauthor}{\PSYCHTOOLSMASKAUTHORfalse}
 \ProcessOptions\relax
+
+% apa6 defines \apaSix@maskauthoridentity when loaded with the `mask` option
+% (apa6.cls). The class is processed before packages, so honour it here.
+\@ifundefined{apaSix@maskauthoridentity}{}{\PSYCHTOOLSMASKAUTHORtrue}
 
 
 %%
@@ -61,6 +72,7 @@
 %%
 
 \ifINCLUDECITECOMMANDS
+    \makeatletter
     \AtBeginDocument{
         \@ifpackageloaded{apacite}{%
             \newcommand{\citeeg}[1]{\cite<e.g.,>[]{#1}}
@@ -71,6 +83,7 @@
             \providecommand{\cites}[1]{\citeauthor{#1}'s \citeyear{#1}}
         }
     }
+    \makeatother
 \fi
 
 
@@ -167,6 +180,10 @@
   \fi
 }
 
+% Environment version of \colorize for longer passages (e.g., whole
+% sections, including figures and tables)
+\newenvironment{colorizeblock}{\ifCOLORIZE\color{red}\fi}{}
+
 \newcommand{\footnotewithdetails}[1]{%
   \ifINCLUDEDETAILS%
     \footnote{\textcolor{red}{(Footnote will be removed)} #1}%
@@ -205,6 +222,20 @@
 \newcommand{\protectedemail}[1]{%
   \tikz[baseline=(char.base)]{%
     \node[inner sep=0pt] (char) {\texttt{#1}};}}
+
+%%
+%% Author masking for anonymous peer review
+%%
+%% Use inline at every mention, like apa6's \maskcite: the argument is printed
+%% verbatim unless masking is active (psychtools option `maskauthor`, or apa6
+%% loaded with `mask`), in which case a fixed redaction marker is printed.
+%%   \maskaffiliation{City St George's, University of London}
+%%   \maskdetail{ETH2223-1027}
+%%
+\newcommand{\maskaffiliation}[1]{%
+  \ifPSYCHTOOLSMASKAUTHOR [affiliation removed for masked review]\else #1\fi}
+\newcommand{\maskdetail}[1]{%
+  \ifPSYCHTOOLSMASKAUTHOR [identifying detail removed for masked review]\else #1\fi}
 
 \newcommand{\includesubgraphics}[2]{
   \begin{subfigure}[a][][t]{.9\textwidth}

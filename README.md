@@ -10,6 +10,9 @@ psychology and cognitive science manuscripts. It covers:
 - **Draft editing aids**: conditional footnotes and section headers that are
   visible (and coloured red) during writing but can be hidden entirely for
   submission with a single package option
+- **Author masking**: wrap institution names and other identifying details so
+  they print normally but become a neutral redaction marker in the
+  anonymous-review build
 - **Citation shortcuts** for `apacite` users
 
 ## Installation
@@ -67,6 +70,14 @@ default because their single-letter names may conflict with math or font
 packages. Request this option only after verifying there are no conflicts with
 other packages you load.
 
+**`maskauthor` / `nomaskauthor`** (default: `nomaskauthor`)  
+Turn *author masking* on or off (see [Author masking](#author-masking-anonymous-review)).
+With `maskauthor`, `\maskaffiliation` and `\maskdetail` print a fixed redaction
+marker instead of their argument. Masking is also enabled automatically when the
+document class is `apa6` loaded with its own `mask` option, so
+`\documentclass[...,mask]{apa6}` needs no extra option; `nomaskauthor` forces it
+off even then.
+
 ## Quick reference
 
 ### Statistical notation (requires `statsmacros`)
@@ -100,7 +111,18 @@ other packages you load.
 \draftsubsubsection{...}    % same for subsubsections
 \footnotewithdetails{...}   % red footnote; hidden with excludedetails
 \colorize{...}              % mark revised text red (reviewer responses); pass-through with nocolorize
+\begin{colorizeblock} ... \end{colorizeblock}  % same for longer passages (whole sections, figures)
 ```
+
+### Author masking (anonymous review)
+```latex
+\maskaffiliation{City St George's, University of London}  % institution name
+\maskdetail{ETH2223-1027}                                 % approval/grant number, project code
+```
+Used inline at each mention (like apa6's `\maskcite`). Both print their argument
+verbatim, or `[affiliation removed for masked review]` /
+`[identifying detail removed for masked review]` when masking is active
+(`maskauthor` option, or `apa6` with `mask`).
 
 ### Citation helpers (apacite)
 ```latex

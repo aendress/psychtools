@@ -25,9 +25,9 @@
 \newcommand{\iopt}[1]{\opt{#1}\index{#1@\texttt{#1} (option)}}
 
 \title{\pkg{psychtools} --- LaTeX Macros for Psychology Manuscripts\\[0.5ex]
-  \large Version 1.1}
+  \large Version 1.2}
 \author{Ansgar Endress\\\texttt{ansgar.endress@m4x.org}}
-\date{2026/06/26}
+\date{2026/08/31}
 
 \begin{document}
 \maketitle
@@ -39,7 +39,7 @@
 
 \pkg{psychtools} provides a collection of convenience macros for writing
 empirical psychology and cognitive science manuscripts in \LaTeX. It addresses
-four common needs:
+five common needs:
 
 \begin{itemize}
   \item \textbf{Statistical notation} (\S\ref{sec:stats}): compact, italic
@@ -53,6 +53,10 @@ four common needs:
         section headers that are marked for removal are shown in red during
         writing but can be hidden entirely for the final submission by
         switching a single package option.
+  \item \textbf{Author masking} (\S\ref{sec:mask}): institution names and
+        other identifying details that are wrapped in a helper command are
+        printed normally, but are replaced by a neutral redaction marker
+        when the manuscript is compiled for anonymous peer review.
   \item \textbf{Citation shortcuts} (\S\ref{sec:cite}): two helpers for
         \pkg{apacite} users.
 \end{itemize}
@@ -76,7 +80,7 @@ and option using a simulated serial-position-effect free-recall experiment.
 \section{Package Options}
 \label{sec:options}
 
-\pkg{psychtools} declares six options, described below. Where a
+\pkg{psychtools} declares eight options, described below. Where a
 default is listed the option is active unless you explicitly override
 it; options with no default are inactive unless you request them.
 
@@ -130,6 +134,22 @@ These commands are \emph{not} defined by default because their
 single-letter names may conflict with commands from math or font
 packages. Request this option only when you need the shortcuts and
 have verified there are no conflicts with other packages you load.
+
+\subsection*{\iopt{maskauthor} / \iopt{nomaskauthor}
+  \quad (default: \opt{nomaskauthor})}
+
+These options control \emph{author masking} for anonymous peer review
+(see \S\ref{sec:mask}).  With the default \opt{nomaskauthor}, the
+\cmd{maskaffiliation} and \cmd{maskdetail} commands simply print their
+argument.  With \opt{maskauthor}, they instead print a fixed neutral
+marker in place of the argument.
+
+Masking is also enabled \emph{automatically} when the document class is
+\pkg{apa6} loaded with its own \opt{mask} option, so a manuscript that
+already uses \verb|\documentclass[...,mask]{apa6}| needs no extra
+option.  Pass \opt{maskauthor} explicitly when you are not using
+\pkg{apa6}, and \opt{nomaskauthor} to force masking off even under
+\pkg{apa6}'s \opt{mask}.
 
 %% ---------------------------------------------------------------
 \section{Statistical Notation}
@@ -342,6 +362,76 @@ when submitting a clean version without visible markup).
 \cmd{colorize} is also used internally by the draft-heading and
 \cmd{footnotewithdetails} commands.
 
+\subsection{\texttt{colorizeblock} environment}
+
+The environment version of \cmd{colorize}, for longer passages such as
+whole sections, including figures and tables:
+\begin{verbatim}
+\begin{colorizeblock}
+  ... revised section ...
+\end{colorizeblock}
+\end{verbatim}
+The contents are typeset in red, or in the normal text colour with the
+\opt{nocolorize} option.
+
+%% ---------------------------------------------------------------
+\section{Author Masking for Anonymous Review}
+\label{sec:mask}
+
+Most journals require a masked (anonymised) version of the manuscript
+for peer review.  Document classes such as \pkg{apa6} blank the author
+and affiliation blocks automatically, but identifying information often
+also appears in \emph{running text} --- the institution that recruited
+participants, the committee that granted ethics approval, an approval
+or grant number, an internal project code.  \pkg{psychtools} provides
+two commands for marking such text so that it is shown in the
+non-masked build but suppressed in the masked one.
+
+Both commands are used \emph{inline, at each point of mention}, in the
+same way as \pkg{apa6}'s \cmd{maskcite}.  There is no set-once
+declaration.
+
+\subsection{\icmd{maskaffiliation}\{\meta{name}\}}
+
+Wraps an institution name.  Prints \meta{name} verbatim unless masking
+is active, in which case it prints
+\texttt{[affiliation removed for masked review]}.
+
+\subsection{\icmd{maskdetail}\{\meta{text}\}}
+
+Wraps any other short identifying string --- an ethics approval number,
+a grant reference, a project code.  Prints \meta{text} verbatim unless
+masking is active, in which case it prints
+\texttt{[identifying detail removed for masked review]}.
+
+\subsection{Activating masking}
+
+Masking is active when \emph{either} of the following holds:
+\begin{itemize}
+  \item \pkg{psychtools} is loaded with the \opt{maskauthor} option
+        (see \S\ref{sec:options}); or
+  \item the document class is \pkg{apa6}, loaded with its own
+        \opt{mask} option --- this is detected automatically.
+\end{itemize}
+\noindent The \opt{nomaskauthor} option forces masking off even when
+\pkg{apa6}'s \opt{mask} is present.
+
+\paragraph{Example}
+\begin{verbatim}
+  \documentclass[man,mask]{apa6}
+  \usepackage{psychtools}
+  ...
+  Participants were recruited from
+  \maskaffiliation{City St George's, University of London}.
+  The study was approved by the Psychology Ethics Committee
+  (\maskdetail{ETH2223-1027}).
+\end{verbatim}
+In the masked build this produces ``Participants were recruited from
+[affiliation removed for masked review]. The study was approved by the
+Psychology Ethics Committee ([identifying detail removed for masked
+review]).''  Removing \opt{mask} from the class options restores the
+real text.
+
 %% ---------------------------------------------------------------
 \section{Citation Helpers (apacite)}
 \label{sec:cite}
@@ -423,6 +513,8 @@ Option & Default & See \\
 \opt{nocolorize}      & off & \S\ref{sec:options} \\
 \opt{nocitecommands}  & off & \S\ref{sec:options} \\
 \opt{statsmacros}     & off & \S\ref{sec:options} \\
+\opt{maskauthor}      & off & \S\ref{sec:options}, \S\ref{sec:mask} \\
+\opt{nomaskauthor}    & on  & \S\ref{sec:options}, \S\ref{sec:mask} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -442,6 +534,8 @@ Command & See \\
 \cmd{draftsubsubsection}   & \S\ref{sec:draft} \\
 \cmd{footnotewithdetails}  & \S\ref{sec:draft} \\
 \cmd{colorize}             & \S\ref{sec:draft} \\
+\cmd{maskaffiliation}      & \S\ref{sec:mask} \\
+\cmd{maskdetail}           & \S\ref{sec:mask} \\
 \cmd{citeeg}               & \S\ref{sec:cite} \\
 \cmd{cites}                & \S\ref{sec:cite} \\
 \cmd{includesubgraphics}   & \S\ref{sec:misc} \\
